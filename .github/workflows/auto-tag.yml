@@ -1,25 +1,21 @@
-name: Build and deploy
+name: Bump version
 on:
   push:
-
+    branches:
+      - main
 jobs:
-  Tag-and-release:
+  build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.0
         with:
-          fetch-depth: 0
-      - name: Fetch tags
-        shell: bash
-        run: git fetch --tags -f
-      - name: Autotag
-        uses: DanySK/semver-autotag-action@master
-      - name: Deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG=$(git describe --tags --exact-match HEAD)
-          hub release create -m "$(git tag -l --format='%(contents)' "$TAG")" "$TAG" || true
-          hub release edit -m '' -a a_file "$TAG"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}
