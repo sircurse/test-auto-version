@@ -17,4 +17,16 @@ jobs:
             #major:major,
             #minor:minor,
             #patch:patch,
-            #fix:patch
+            #fix:patch,
+            bug:patch:Bug Fix,
+            chore:patch:Chore,
+            feat:patch:Feature,
+            perf:patch:Performance,
+            ci:patch:Continuous Integration,
+            docs:patch:Documentation,
+            style:patch:Code Style,
+            refactor:patch:Refactoring,
+            test:patch:Tests,
+            preminor_upd:preminor:Pre Minor Update,
+            minor_upd:minor:Minor Update,
+            major_upd:major:Major Update
