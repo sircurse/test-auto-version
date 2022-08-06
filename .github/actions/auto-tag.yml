@@ -1,16 +1,22 @@
-name: 'Github Tag Bump'
-description: 'Bump and push git tag on merge'
-author: 'Nick Sjostrom'
+name: 'SemVer Autotag'
+description: 'Tags the project (if untagged) generating a valid (and reasonable) Semantic Versioning 2.0 version'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-outputs:
-  new_tag:
-    description: 'Generated tag'
-  tag:
-    description: 'The latest tag after running this action'
-  part:
-    description: 'The part of version which was bumped'
+  using: "composite"
+  steps: 
+    - run: |
+        COMMITTER=${COMMITER:-$(git log -1 --pretty=format:'%an')}
+        EMAIL=${EMAIL:-$(git log -1 --pretty=format:'%ae')}
+        if [ -z $(git config user.email) ]; then
+            git config --global user.email "${EMAIL}"
+        fi
+        if [ -z $(git config user.name) ]; then
+            git config --global user.name "${COMMITTER}"
+        fi
+        curl -sL https://github.com/DanySK/Gravis-CI/raw/master/autotag >> autotag
+        chmod +x autotag
+        ./autotag
+        rm autotag
+      shell: bash
 branding:
-  icon: 'git-merge'  
-  color: 'purple'
+  icon: tag
+  color: blue
